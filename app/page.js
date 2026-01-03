@@ -38,9 +38,9 @@ export default function Home() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [newName, setNewName] = useState('')
+  const [syllableCount, setSyllableCount] = useState(0);
   const [newHaiku, setNewHaiku] = useState('')
   const [currentMonth, setCurrentMonth] = useState('January')
-  const [syllableCount, setSyllableCount] = useState(0);
   useEffect(() => {
     fetchPromptAndEntries()
   }, [])
