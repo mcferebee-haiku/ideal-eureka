@@ -21,7 +21,18 @@ const monthStyles = {
   November: { bg: 'bg-[#f4f4f4]', text: 'text-slate-900', accent: 'border-slate-300' },
   December: { bg: 'bg-[#f9f9fb]', text: 'text-indigo-900', accent: 'border-indigo-200' },
 }
-
+const countSyllables = (str) => {
+  const text = str.toLowerCase().replace(/[^a-z ]/g, "");
+  if (text.length === 0) return 0;
+  const words = text.split(/\s+/);
+  return words.reduce((acc, word) => {
+    if (word.length <= 3) return acc + 1;
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+    word = word.replace(/^y/, '');
+    const syllables = word.match(/[aeiouy]{1,2}/g);
+    return acc + (syllables ? syllables.length : 1);
+  }, 0);
+};
 export default function Home() {
   const [prompt, setPrompt] = useState(null)
   const [entries, setEntries] = useState([])
@@ -29,7 +40,7 @@ export default function Home() {
   const [newName, setNewName] = useState('')
   const [newHaiku, setNewHaiku] = useState('')
   const [currentMonth, setCurrentMonth] = useState('January')
-
+  const [syllableCount, setSyllableCount] = useState(0);
   useEffect(() => {
     fetchPromptAndEntries()
   }, [])
@@ -131,6 +142,11 @@ export default function Home() {
           maxLength={5}
           className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-40"
         />
+        <div className="flex justify-between items-center mt-2 mb-4">
+  <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-40'}`}>
+    {syllableCount} / 17 Syllables
+  </span>
+</div>
         <button type="submit" className="w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] hover:bg-black hover:text-white transition-all duration-500">
           Submit
         </button>
