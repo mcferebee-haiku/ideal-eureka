@@ -126,32 +126,47 @@ export default function Home() {
       )}
 
       {/* 2. Submission Form */}
-      <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
-        <textarea 
-          placeholder="Your 17 Syllables For The Day" 
-          value={newHaiku}
-          onChange={(e) => setNewHaiku(e.target.value)}
-          rows="3"
-          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors italic leading-relaxed text-center placeholder:opacity-40"
-        />
-        <input 
-          type="text" 
-          placeholder="Your initials" 
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          maxLength={5}
-          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-40"
-        />
-        <div className="flex justify-between items-center mt-2 mb-4">
-  <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-40'}`}>
-    {syllableCount} / 17 Syllables
-  </span>
-</div>
-        <button type="submit" className="w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] hover:bg-black hover:text-white transition-all duration-500">
-          Submit
-        </button>
-      </form>
+   <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
+  
+  {/* The Text Area */}
+  <textarea 
+    placeholder="Your 17 Syllables For The Day" 
+    value={newHaiku}
+    onChange={(e) => {
+      const text = e.target.value;
+      setNewHaiku(text);
+      setSyllableCount(countSyllables(text)); // This makes the number dance!
+    }}
+    rows="3"
+    className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors italic leading-relaxed text-center placeholder:opacity-40"
+  />
 
+  {/* The Counter - Now safely outside the textarea */}
+  <div className="flex justify-between items-center mt-[-15px] mb-4">
+    <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-40'}`}>
+      {syllableCount} / 17 Syllables
+    </span>
+  </div>
+
+  {/* The Initials Input */}
+  <input 
+    type="text" 
+    placeholder="Your initials" 
+    value={newName}
+    onChange={(e) => setNewName(e.target.value)}
+    maxLength={5}
+    className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-40"
+  />
+
+  {/* The Button */}
+  <button 
+    type="submit" 
+    disabled={syllableCount > 17} // Pro move: prevents clicking if over 17
+    className="w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] hover:bg-black hover:text-white transition-all duration-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black"
+  >
+    Submit
+  </button>
+</form>
       {/* 3. Community Entries */}
       <div className="max-w-2xl w-full space-y-20 mb-40">
         <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-40 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
