@@ -90,7 +90,7 @@ export default function Home() {
         <img 
           src="/logo.png" 
           alt="Logo" 
-          className="w-29 h-29 object-contain"
+          className="w-27 h-27 object-contain"
           onError={(e) => e.target.style.display='none'} 
         />
       </div>
