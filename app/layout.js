@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Daily Haiku Sanctuary',
-  description: 'One word, one vibe, every day.',
+  title: '575x365',
+  description: 'Seventeen syllables. Seven days a week.',
 }
 
 export default function RootLayout({ children }) {

@@ -90,7 +90,7 @@ export default function Home() {
         <img 
           src="/logo.png" 
           alt="Logo" 
-          className="w-18 h-18 object-contain"
+          className="w-32 h-32 object-contain"
           onError={(e) => e.target.style.display='none'} 
         />
       </div>
@@ -117,7 +117,7 @@ export default function Home() {
       {/* 2. Submission Form */}
       <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
         <textarea 
-          placeholder="Your Daily 17 Syllables" 
+          placeholder="Your 17 Syllables For The Day" 
           value={newHaiku}
           onChange={(e) => setNewHaiku(e.target.value)}
           rows="3"
