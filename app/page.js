@@ -86,7 +86,7 @@ export default function Home() {
     <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
       
       {/* --- LOGO SECTION --- */}
-      <div className="absolute top-6 left-5 opacity-40 hover:opacity-100 transition-opacity">
+      <div className="absolute top-6 left-8 opacity-40 hover:opacity-100 transition-opacity">
         <img 
           src="/logo.png" 
           alt="Logo" 
