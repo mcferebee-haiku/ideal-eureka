@@ -86,11 +86,11 @@ export default function Home() {
     <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
       
       {/* --- LOGO SECTION --- */}
-      <div className="absolute top-6 left-5 opacity-40 hover:opacity-100 transition-opacity">
+      <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity">
         <img 
           src="/logo.png" 
           alt="Logo" 
-          className="w-27 h-27 object-contain"
+          className="w-23 h-23 object-contain"
           onError={(e) => e.target.style.display='none'} 
         />
       </div>
