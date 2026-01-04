@@ -22,17 +22,17 @@ const monthStyles = {
   December: { bg: 'bg-[#f9f9fb]', text: 'text-indigo-900', accent: 'border-indigo-200' },
 }
 const haikuQuotes = [
-  "“There is no place we cannot find flowers or think of the moon...” — Santōka Taneda",
-  "“Meaning lies as much in the mind of the reader as in the haiku.” — Douglas R. Hofstadter",
-  "“Haiku are meant to evoke an emotional response...” — Bukusai Ashagawa",
-  "“The haiku reproduces the designating gesture of a child...” — Roland Barthes",
-  "“Anything that is not actually present in one’s heart is not haiku.” — Santōka Taneda",
-  "“Haiku is a snapshot in time. No veils, no mystery.” — Mestre",
-  "“If death is like a sonnet then life would be a haiku.” — R.M. Engelhardt",
-  "“You were almost like a haiku: said so little, but meant so much.” — Abraham Algahanem",
-  "“Haiku is the deep breath of life.” — Santōka Taneda",
-  "“The haiku is a moment, pure and unblemished.” — Mestre",
-  "“The love of nature is religion, and that religion is poetry.” — R.H. Blyth"
+  "“There is no place we cannot find flowers or think of the moon...” \n— Santōka Taneda",
+  "“Meaning lies as much in the mind of the reader as in the haiku.” \n— Douglas R. Hofstadter",
+  "“Haiku are meant to evoke an emotional response...” \n— Bukusai Ashagawa",
+  "“The haiku reproduces the designating gesture of a child...” \n— Roland Barthes",
+  "“Anything that is not actually present in one’s heart is not haiku.” \n— Santōka Taneda",
+  "“Haiku is a snapshot in time. No veils, no mystery.” \n— Mestre",
+  "“If death is like a sonnet then life would be a haiku.” \n— R.M. Engelhardt",
+  "“You were almost like a haiku: said so little, but meant so much.” \n— Abraham Algahanem",
+  "“Haiku is the deep breath of life.” \n— Santōka Taneda",
+  "“The haiku is a moment, pure and unblemished.” \n— Mestre",
+  "“The love of nature is religion, and that religion is poetry.” \n— R.H. Blyth"
 ];
 const countSyllables = (str) => {
   const text = str.toLowerCase().replace(/[^a-z ]/g, "");
@@ -107,9 +107,10 @@ export default function Home() {
   // ... (Your existing code to save to Supabase goes here)
 };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center italic">
-    <p className="max-w-xs animate-pulse opacity-60 text-sm tracking-wide leading-relaxed">
+if (loading) return (
+  <div className="min-h-screen flex items-center justify-center p-8 text-center italic">
+    {/* Notice 'whitespace-pre-line' added below */}
+    <p className="max-w-xs animate-pulse opacity-60 text-sm tracking-wide leading-relaxed whitespace-pre-line">
       {loadingQuote}
     </p>
   </div>
