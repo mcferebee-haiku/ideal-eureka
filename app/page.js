@@ -144,7 +144,7 @@ if (loading) return (
     href="/archive" 
     className="block text-[10px] uppercase tracking-[0.3em] opacity-20 hover:opacity-100 transition-all duration-500 border-t border-black/5 pt-2"
   >
-    The Archive —&gt;
+    Archive —&gt;
   </Link>
 </div>
       
