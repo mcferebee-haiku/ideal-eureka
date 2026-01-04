@@ -38,11 +38,11 @@ async function fetchArchive() {
   setLoading(false);
 }
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center italic opacity-60">
-      Opening the vault...
-    </div>
-  )
+if (loading) return (
+  <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic text-[#d1d1d1] opacity-60 transition-colors duration-1000">
+    Opening the vault...
+  </div>
+);
 
  return (
   <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 selection:bg-white/10">
