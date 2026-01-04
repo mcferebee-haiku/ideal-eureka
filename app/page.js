@@ -21,6 +21,19 @@ const monthStyles = {
   November: { bg: 'bg-[#f4f4f4]', text: 'text-slate-900', accent: 'border-slate-300' },
   December: { bg: 'bg-[#f9f9fb]', text: 'text-indigo-900', accent: 'border-indigo-200' },
 }
+const haikuQuotes = [
+  "“There is no place we cannot find flowers or think of the moon...” — Santōka Taneda",
+  "“Meaning lies as much in the mind of the reader as in the haiku.” — Douglas R. Hofstadter",
+  "“Haiku are meant to evoke an emotional response...” — Bukusai Ashagawa",
+  "“The haiku reproduces the designating gesture of a child...” — Roland Barthes",
+  "“Anything that is not actually present in one’s heart is not haiku.” — Santōka Taneda",
+  "“Haiku is a snapshot in time. No veils, no mystery.” — Mestre",
+  "“If death is like a sonnet then life would be a haiku.” — R.M. Engelhardt",
+  "“You were almost like a haiku: said so little, but meant so much.” — Abraham Algahanem",
+  "“Haiku is the deep breath of life.” — Santōka Taneda",
+  "“The haiku is a moment, pure and unblemished.” — Mestre",
+  "“The love of nature is religion, and that religion is poetry.” — R.H. Blyth"
+];
 const countSyllables = (str) => {
   const text = str.toLowerCase().replace(/[^a-z ]/g, "");
   if (text.length === 0) return 0;
@@ -38,10 +51,19 @@ export default function Home() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [newName, setNewName] = useState('')
-  const [syllableCount, setSyllableCount] = useState(0);
+  const [syllableCount, setSyllableCount] = useState(0)
   const [newHaiku, setNewHaiku] = useState('')
   const [currentMonth, setCurrentMonth] = useState('January')
+  
+  // NEW STATES FOR YOUR IDEAS
+  const [loadingQuote, setLoadingQuote] = useState('')
+  const [isShaking, setIsShaking] = useState(false)
+
   useEffect(() => {
+    // Pick the random quote immediately when the site opens
+    const randomQuote = haikuQuotes[Math.floor(Math.random() * haikuQuotes.length)];
+    setLoadingQuote(randomQuote);
+    
     fetchPromptAndEntries()
   }, [])
 
@@ -71,25 +93,27 @@ export default function Home() {
     setLoading(false)
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    if (!newName || !newHaiku || !prompt) return
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const { error } = await supabase
-      .from('entries')
-      .insert([{ name: newName, content: newHaiku, prompt_id: prompt.id }])
-
-    if (!error) {
-      setNewHaiku(''); setNewName('')
-      fetchPromptAndEntries()
-    }
+  // THE BOUNCER LOGIC
+  if (syllableCount !== 17) {
+    setIsShaking(true);
+    // This turns the shaking off after 0.4s so it can shake again later
+    setTimeout(() => setIsShaking(false), 400); 
+    return; // STOP HERE
   }
 
+  // ... (Your existing code to save to Supabase goes here)
+};
+
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#faf9f6] font-serif italic text-slate-400">
-      Opening the gates...
-    </div>
-  )
+    <div className="min-h-screen flex items-center justify-center p-8 text-center italic">
+    <p className="max-w-xs animate-pulse opacity-60 text-sm tracking-wide leading-relaxed">
+      {loadingQuote}
+    </p>
+  </div>
+);
 
   const style = monthStyles[currentMonth] || monthStyles.January
 
@@ -159,13 +183,13 @@ export default function Home() {
   />
 
   {/* The Button */}
-  <button 
-    type="submit" 
-    disabled={syllableCount > 17} // Pro move: prevents clicking if over 17
-    className="w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] hover:bg-black hover:text-white transition-all duration-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black"
-  >
-    Submit
-  </button>
+ <button 
+  type="submit" 
+  className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 
+    ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
+>
+  {syllableCount === 17 ? 'Submit' : 'Must be 17 syllables'}
+</button>
 </form>
       {/* 3. Community Entries */}
       <div className="max-w-2xl w-full space-y-20 mb-40">
