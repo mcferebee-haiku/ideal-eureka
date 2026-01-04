@@ -134,10 +134,19 @@ if (loading) return (
         />
       </div>
 
-      {/* --- DATE SECTION --- */}
-      <div className="absolute top-8 right-8 text-[10px] uppercase tracking-[0.3em] opacity-40 font-sans">
-        {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-      </div>
+{/* Top Right Navigation & Date */}
+<div className="absolute top-8 right-8 text-right z-20">
+  <div className="text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2">
+    {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+  </div>
+  
+  <Link 
+    href="/archive" 
+    className="block text-[10px] uppercase tracking-[0.3em] opacity-20 hover:opacity-100 transition-all duration-500 border-t border-black/5 pt-2"
+  >
+    The Archive —&gt;
+  </Link>
+</div>
       
       {/* 1. Theme Word Section */}
       {prompt && (
