@@ -21,14 +21,26 @@ export default function Archive() {
       const { data: prompts } = await supabase.from('prompts').select('*').order('created_at', { ascending: false });
       const { data: entries } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
 
-      if (prompts && entries) {
-        const grouped = prompts.map(p => ({
-  ...p,
-  haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
-})).filter(p => p.haikus.length > 0);
+if (prompts && entries) {
+        const grouped = prompts.map(p => {
+          // 1. Force the date to stay in UTC so it doesn't shift by a day
+          const displayDate = new Date(p.created_at).toLocaleDateString('en-US', {
+            timeZone: 'UTC',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          });
+
+          return {
+            ...p,
+            displayDate, // Use this for the heading in your JSX
+            haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
+          };
+        }).filter(p => p.haikus.length > 0);
         
         setArchiveData(grouped);
       }
+    
     } catch (err) {
       console.error(err);
     } finally {
@@ -66,10 +78,10 @@ export default function Archive() {
               </header>
 
 {group.haikus.map((haiku) => (
-  <div key={haiku.id}>
+  <div key={haiku.id} className="mb-4">
     <p className="text-lg italic">{haiku.content}</p>
-    <p className="text-[9px] uppercase tracking-widest text-[#888888]">
-       — {haiku.author || "anon"}
+    <p className="text-[9px] uppercase tracking-widest text-gray-400">
+      — {haiku.author || "anon"}  {/* <--- Ensure this says .author */}
     </p>
   </div>
 ))}
