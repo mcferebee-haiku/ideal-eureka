@@ -115,7 +115,7 @@ const handleSubmit = async (e) => {
   // 3. The Payload (Ensuring prompt_id matches the DB type)
   const payload = { 
     content: newHaiku, 
-    name: newName || 'anon', 
+    author: newName || 'anon', 
     prompt_id: prompt.id // If your DB uses numbers, use Number(prompt.id)
   };
 
