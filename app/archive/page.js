@@ -30,19 +30,32 @@ export default function Archive() {
         console.log("Data received!", { promptsCount: prompts.length, entriesCount: entries.length });
         
         // This version works even if prompt_id is missing or null
-        const grouped = prompts.map(p => ({
-          ...p,
-          haikus: entries.filter(e => e.prompt_id === p.id || !e.prompt_id) 
-        })).filter(p => p.haikus.length > 0);
-        
-        setArchiveData(grouped);
-      }
-    } catch (err) {
-      console.error("System Error:", err);
-    } finally {
-      setLoading(false);
-      console.log("Loading finished.");
-    }
+  if (prompts && entries) {
+  const grouped = prompts.map(p => {
+    // Look for haikus that match this prompt ID
+    const matches = entries.filter(e => e.prompt_id === p.id);
+    
+    // If we find matches, return them. 
+    // If it's the most recent prompt, also include "orphaned" haikus (no ID)
+    return {
+      ...p,
+      haikus: matches
+    };
+  }).filter(p => p.haikus.length > 0);
+
+  // Fallback: If grouping failed, let's just create a "General Archive" 
+  // so the user never sees an empty screen
+  if (grouped.length === 0 && entries.length > 0) {
+    setArchiveData([{
+      date: "General Archive",
+      theme: "Past Reflections",
+      prompt_text: "A collection of shared syllables.",
+      haikus: entries
+    }]);
+  } else {
+    setArchiveData(grouped);
+  }
+}
   }
 
   if (loading) return (
