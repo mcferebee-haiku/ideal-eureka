@@ -43,7 +43,7 @@ export default function Archive() {
       <div className="w-full max-w-xl text-center">
         <nav className="mb-24">
           <Link href="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
-            ← Back Today
+            ← Back to Today
           </Link>
         </nav>
 
