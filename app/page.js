@@ -99,33 +99,40 @@ export default function Home() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // 1. Validation check
+  // 1. Double check the prompt exists
+  if (!prompt || !prompt.id) {
+    alert("System Error: No active prompt found to link to.");
+    return;
+  }
+
+  // 2. Syllable Bouncer
   if (syllableCount !== 17) {
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 400); 
     return; 
   }
 
-  // 2. The Fix: Ensure we use 'name' instead of 'author'
+  // 3. Log the payload so we can see it in the console
+  const payload = { 
+    content: newHaiku, 
+    name: newName || 'anon', // Fallback to anon if empty
+    prompt_id: prompt.id 
+  };
+  console.log("Attempting to save:", payload);
+
   const { error } = await supabase
     .from('entries')
-    .insert([
-      { 
-        content: newHaiku, 
-        name: newName,  // <--- Check this line! It must be 'name', not 'author'
-        prompt_id: prompt.id 
-      },
-    ]);
+    .insert([payload]);
 
   if (error) {
-    console.error('Error saving haiku:', error);
-    alert('Submission failed. Check console for details.'); // Temporary alert to catch the error
+    console.error('Submission Failed:', error.message);
+    console.error('Error Details:', error.details);
+    alert(`Error: ${error.message}`);
   } else {
-    // Reset form on success
     setNewHaiku('');
     setNewName('');
     setSyllableCount(0);
-    fetchPromptAndEntries(); // Refresh the list
+    fetchPromptAndEntries();
   }
 };
 
