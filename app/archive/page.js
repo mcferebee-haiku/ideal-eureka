@@ -16,9 +16,9 @@ export default function Archive() {
     fetchArchive()
   }, [])
 
-  async function fetchArchive() {
+async function fetchArchive() {
     try {
-      console.log("Starting fetch...")
+      console.log("Starting fetch...");
       
       const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('date', { ascending: false });
       const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
@@ -29,32 +29,35 @@ export default function Archive() {
       if (prompts && entries) {
         console.log("Data received!", { promptsCount: prompts.length, entriesCount: entries.length });
         
-        // This version works even if prompt_id is missing or null
-  if (prompts && entries) {
-  const grouped = prompts.map(p => {
-    // Look for haikus that match this prompt ID
-const matches = entries.filter(e => String(e.prompt_id) === String(p.id));    
-    // If we find matches, return them. 
-    // If it's the most recent prompt, also include "orphaned" haikus (no ID)
-    return {
-      ...p,
-      haikus: matches
-    };
-  }).filter(p => p.haikus.length > 0);
+        // 1. Try to group them properly (The "Handshake")
+        let grouped = prompts.map(p => ({
+          ...p,
+          haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
+        })).filter(p => p.haikus.length > 0);
 
-  // Fallback: If grouping failed, let's just create a "General Archive" 
-  // so the user never sees an empty screen
-  if (grouped.length === 0 && entries.length > 0) {
-    setArchiveData([{
-      date: "General Archive",
-      theme: "Past Reflections",
-      prompt_text: "A collection of shared syllables.",
-      haikus: entries
-    }]);
-  } else {
-    setArchiveData(grouped);
-  }
-}
+        // 2. FIND THE ORPHANS (Haikus without a matching prompt_id)
+        const linkedIds = prompts.map(p => String(p.id));
+        const orphans = entries.filter(e => !e.prompt_id || !linkedIds.includes(String(e.prompt_id)));
+
+        // 3. Add Orphans to a fallback category so they aren't hidden
+        if (orphans.length > 0) {
+          grouped.push({
+            id: 'orphans',
+            date: 'Recent Submissions',
+            theme: 'Community Gallery',
+            prompt_text: 'Syllables captured in the wild.',
+            haikus: orphans
+          });
+        }
+
+        setArchiveData(grouped);
+      }
+    } catch (err) {
+      console.error("System Error:", err);
+    } finally {
+      setLoading(false);
+      console.log("Loading finished.");
+    }
   }
 
   if (loading) return (
