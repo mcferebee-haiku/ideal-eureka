@@ -223,7 +223,7 @@ const { error } = await supabase
   className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 
     ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
 >
-  {syllableCount === 17 ? 'Submit Now' : 'Must be 17 syllables'}
+  {syllableCount === 17 ? 'Submit' : 'Must be 17 syllables'}
 </button>
 </form>
       {/* 3. Community Entries */}
