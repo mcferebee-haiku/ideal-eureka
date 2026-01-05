@@ -96,28 +96,37 @@ export default function Home() {
     setLoading(false)
   }
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // THE BOUNCER LOGIC
+  // 1. THE BOUNCER: Don't submit if it's not 17 syllables
   if (syllableCount !== 17) {
     setIsShaking(true);
-    // This turns the shaking off after 0.4s so it can shake again later
     setTimeout(() => setIsShaking(false), 400); 
-    return; // STOP HERE
+    return; 
   }
 
-  // ... (Your existing code to save to Supabase goes here)
-};
+  // 2. THE HANDSHAKE: Save to Supabase with the prompt connection
+  const { error } = await supabase
+    .from('entries')
+    .insert([
+      { 
+        content: newHaiku, 
+        author: newName, 
+        prompt_id: prompt.id // This links the haiku to today's prompt!
+      },
+    ]);
 
-if (loading) return (
-  <div className="min-h-screen flex items-center justify-center p-8 text-center italic">
-    {/* Notice 'whitespace-pre-line' added below */}
-    <p className="max-w-xs animate-pulse opacity-60 text-sm tracking-wide leading-relaxed whitespace-pre-line">
-      {loadingQuote}
-    </p>
-  </div>
-);
+  if (error) {
+    console.error('Error saving haiku:', error);
+  } else {
+    // Reset the form after success
+    setNewHaiku('');
+    setNewName('');
+    setSyllableCount(0);
+    fetchPromptAndEntries(); // Refresh the list to show the new entry
+  }
+};
 
   const style = monthStyles[currentMonth] || monthStyles.January
 
