@@ -13,39 +13,38 @@ export default function Archive() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchArchive()
-  }, [])
-
 async function fetchArchive() {
     try {
-      console.log("Starting fetch...");
+      console.log("Starting fetch with 'day' column...");
       
-const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('day', { ascending: false });
-const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
+      // We are now specifically asking for 'day' instead of 'date'
+      const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('day', { ascending: false });
+      const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
 
-      if (pError) console.error("Prompt Error:", pError);
-      if (eError) console.error("Entry Error:", eError);
+      if (pError) {
+        console.error("Prompt Error (Check table column names):", pError);
+      }
 
       if (prompts && entries) {
-        console.log("Data received!", { promptsCount: prompts.length, entriesCount: entries.length });
+        console.log("Data successfully loaded from Supabase");
         
-        // 1. Try to group them properly (The "Handshake")
+        // 1. Grouping logic using 'day'
         let grouped = prompts.map(p => ({
           ...p,
           haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
         })).filter(p => p.haikus.length > 0);
 
-        // 2. FIND THE ORPHANS (Haikus without a matching prompt_id)
+        // 2. Identify entries not linked to a prompt
         const linkedIds = prompts.map(p => String(p.id));
         const orphans = entries.filter(e => !e.prompt_id || !linkedIds.includes(String(e.prompt_id)));
 
-        // 3. Add Orphans to a fallback category so they aren't hidden
+        // 3. Add Orphans using the 'day' key so the UI can find it
         if (orphans.length > 0) {
           grouped.push({
             id: 'orphans',
-            date: 'Recent Submissions',
+            day: 'Past Syllables', // Changed from date to day
             theme: 'Community Gallery',
-            prompt_text: 'Syllables captured in the wild.',
+            prompt_text: 'A collection of shared moments.',
             haikus: orphans
           });
         }
@@ -56,8 +55,8 @@ const { data: entries, error: eError } = await supabase.from('entries').select('
       console.error("System Error:", err);
     } finally {
       setLoading(false);
-      console.log("Loading finished.");
     }
+  }
   }
 
   if (loading) return (
