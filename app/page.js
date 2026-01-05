@@ -99,9 +99,9 @@ export default function Home() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // 1. Double check the prompt exists
+  // 1. Guard: Check if the prompt actually loaded
   if (!prompt || !prompt.id) {
-    alert("System Error: No active prompt found to link to.");
+    console.error("No active prompt found.");
     return;
   }
 
@@ -112,22 +112,21 @@ const handleSubmit = async (e) => {
     return; 
   }
 
-  // 3. Log the payload so we can see it in the console
+  // 3. The Payload (Ensuring prompt_id matches the DB type)
   const payload = { 
     content: newHaiku, 
-    name: newName || 'anon', // Fallback to anon if empty
-    prompt_id: prompt.id 
+    name: newName || 'anon', 
+    prompt_id: prompt.id // If your DB uses numbers, use Number(prompt.id)
   };
-  console.log("Attempting to save:", payload);
 
   const { error } = await supabase
     .from('entries')
     .insert([payload]);
 
   if (error) {
-    console.error('Submission Failed:', error.message);
-    console.error('Error Details:', error.details);
-    alert(`Error: ${error.message}`);
+    console.error('Error details:', error);
+    // This alert will tell us the EXACT reason (e.g., "foreign key violation")
+    alert(`Submission Failed: ${error.message}`);
   } else {
     setNewHaiku('');
     setNewName('');
