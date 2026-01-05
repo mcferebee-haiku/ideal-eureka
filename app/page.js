@@ -119,9 +119,15 @@ const handleSubmit = async (e) => {
     prompt_id: prompt.id // If your DB uses numbers, use Number(prompt.id)
   };
 
-  const { error } = await supabase
-    .from('entries')
-    .insert([payload]);
+const { error } = await supabase
+  .from('entries')
+  .insert([
+    { 
+      content: newHaiku, 
+      author: newName, // Match the Supabase column name exactly
+      prompt_id: prompt.id 
+    },
+  ]);
 
   if (error) {
     console.error('Error details:', error);
@@ -224,9 +230,14 @@ const handleSubmit = async (e) => {
       <div className="max-w-2xl w-full space-y-20 mb-40">
         <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-40 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
         {entries.length > 0 ? (
-          entries.map((entry, index) => (
-            <div 
-              key={entry.id} 
+{entries.map((entry) => (
+  <div key={entry.id}>
+    <p>{entry.content}</p>
+    <p className="text-[9px] uppercase tracking-widest text-gray-400">
+      — {entry.author || "anon"} {/* Match the column name here too */}
+    </p>
+  </div>
+))}
               className="text-left animate-fade-in mx-auto max-w-sm" 
               style={{ animationDelay: `${0.8 + (index * 0.2)}s` }}
             >

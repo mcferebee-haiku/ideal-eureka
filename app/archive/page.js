@@ -65,15 +65,14 @@ export default function Archive() {
                 <p className="italic opacity-60 text-xs">"{group.prompt_text}"</p>
               </header>
 
-              <div className="space-y-20">
-                {group.haikus.map((haiku) => (
-                  <div key={haiku.id} className="space-y-2">
-                    <p className="text-lg italic whitespace-pre-line">{haiku.content}</p>
-                    <p className="text-[9px] uppercase tracking-widest text-[#888888]">
-                       {haiku.name ? `— ${haiku.name}` : ""}
-                    </p>
-                  </div>
-                ))}
+{group.haikus.map((haiku) => (
+  <div key={haiku.id}>
+    <p className="text-lg italic">{haiku.content}</p>
+    <p className="text-[9px] uppercase tracking-widest text-[#888888]">
+       — {haiku.author || "anon"}
+    </p>
+  </div>
+))}
               </div>
             </section>
           ))}
