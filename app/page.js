@@ -99,32 +99,33 @@ export default function Home() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // 1. THE BOUNCER: Don't submit if it's not 17 syllables
+  // 1. Validation check
   if (syllableCount !== 17) {
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 400); 
     return; 
   }
 
-  // 2. THE HANDSHAKE: Save to Supabase with the prompt connection
+  // 2. The Fix: Ensure we use 'name' instead of 'author'
   const { error } = await supabase
     .from('entries')
     .insert([
       { 
         content: newHaiku, 
-        author: newName, 
-        prompt_id: prompt.id // This links the haiku to today's prompt!
+        name: newName,  // <--- Check this line! It must be 'name', not 'author'
+        prompt_id: prompt.id 
       },
     ]);
 
   if (error) {
     console.error('Error saving haiku:', error);
+    alert('Submission failed. Check console for details.'); // Temporary alert to catch the error
   } else {
-    // Reset the form after success
+    // Reset form on success
     setNewHaiku('');
     setNewName('');
     setSyllableCount(0);
-    fetchPromptAndEntries(); // Refresh the list to show the new entry
+    fetchPromptAndEntries(); // Refresh the list
   }
 };
 
