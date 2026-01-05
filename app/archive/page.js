@@ -33,8 +33,7 @@ export default function Archive() {
   if (prompts && entries) {
   const grouped = prompts.map(p => {
     // Look for haikus that match this prompt ID
-    const matches = entries.filter(e => e.prompt_id === p.id);
-    
+const matches = entries.filter(e => String(e.prompt_id) === String(p.id));    
     // If we find matches, return them. 
     // If it's the most recent prompt, also include "orphaned" haikus (no ID)
     return {
