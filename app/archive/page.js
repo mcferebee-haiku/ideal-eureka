@@ -23,9 +23,9 @@ export default function Archive() {
 
       if (prompts && entries) {
         const grouped = prompts.map(p => ({
-          ...p,
-          haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
-        })).filter(p => p.haikus.length > 0);
+  ...p,
+  haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
+})).filter(p => p.haikus.length > 0);
         
         setArchiveData(grouped);
       }
@@ -52,7 +52,15 @@ export default function Archive() {
             <section key={group.id} className="space-y-16">
               <header className="space-y-4">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
-                  {new Date(group.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()}
+{/* FIND THIS LINE IN YOUR RETURN STATEMENT: */}
+<p className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
+  {group.created_at 
+    ? new Date(group.created_at).toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }).toUpperCase() 
+    : "DATE MISSING"}
                 </p>
                 <h2 className="text-lg uppercase tracking-widest">{group.theme}</h2>
                 <p className="italic opacity-60 text-xs">"{group.prompt_text}"</p>
