@@ -22,23 +22,11 @@ export default function Archive() {
       const { data: entries } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
 
       if (prompts && entries) {
-        let grouped = prompts.map(p => ({
+        const grouped = prompts.map(p => ({
           ...p,
           haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
         })).filter(p => p.haikus.length > 0);
-
-        const linkedIds = prompts.map(p => String(p.id));
-        const orphans = entries.filter(e => !e.prompt_id || !linkedIds.includes(String(e.prompt_id)));
-
-        if (orphans.length > 0) {
-          grouped.push({
-            id: 'orphans',
-            created_at: new Date().toISOString(),
-            theme: 'Community Gallery',
-            prompt_text: 'Syllables captured in the wild.',
-            haikus: orphans
-          });
-        }
+        
         setArchiveData(grouped);
       }
     } catch (err) {
@@ -48,55 +36,42 @@ export default function Archive() {
     }
   }
 
-  if (loading) return (
-    <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic text-[#888888]">
-      Opening the vault...
-    </div>
-  );
+  if (loading) return <div className="min-h-screen bg-white flex items-center justify-center italic opacity-40 uppercase text-[10px] tracking-widest">Opening Vault...</div>
 
   return (
-    <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 md:p-16">
-      
-      {/* Pinned Navigation */}
-      <nav className="fixed top-8 left-8 right-8 flex justify-between items-center z-50">
-        <Link href="/" className="text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-white transition-colors duration-500">
-          ← Today
-        </Link>
-        <span className="text-[10px] uppercase tracking-[0.3em] text-[#888888] opacity-50">
-          Archive
-        </span>
-      </nav>
+    <main className="min-h-screen bg-white text-black font-[family-name:var(--font-geist-serif)] p-8 md:p-24 flex flex-col items-center">
+      <div className="w-full max-w-xl text-center">
+        <nav className="mb-24">
+          <Link href="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
+            ← Back Today
+          </Link>
+        </nav>
 
-      <div className="max-w-xl mx-auto mt-32 space-y-40">
-        {archiveData.map((group) => (
-          <section key={group.id} className="animate-fade-in text-left">
-            {/* Group Header */}
-            <div className="mb-10">
-              <p className="text-[10px] uppercase tracking-[0.4em] text-[#888888] mb-4">
-                {group.created_at ? new Date(group.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase() : "RECENT"}
-              </p>
-              <div className="border-l border-white/10 pl-6">
-                <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{group.theme}</h2>
-                <p className="text-xs italic opacity-40">"{group.prompt_text}"</p>
+        <div className="space-y-40">
+          {archiveData.map((group) => (
+            <section key={group.id} className="space-y-16">
+              <header className="space-y-4">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
+                  {new Date(group.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()}
+                </p>
+                <h2 className="text-lg uppercase tracking-widest">{group.theme}</h2>
+                <p className="italic opacity-60 text-xs">"{group.prompt_text}"</p>
+              </header>
+
+              <div className="space-y-20">
+                {group.haikus.map((haiku) => (
+                  <div key={haiku.id} className="space-y-2">
+                    <p className="text-lg italic whitespace-pre-line">{haiku.content}</p>
+                    <p className="text-[9px] uppercase tracking-widest text-[#888888]">
+                       {haiku.name ? `— ${haiku.name}` : ""}
+                    </p>
+                  </div>
+                ))}
               </div>
-            </div>
-
-            {/* Group Haikus */}
-            <div className="space-y-20 pl-6">
-              {group.haikus.map((haiku) => (
-                <div key={haiku.id} className="group">
-                  <p className="text-lg leading-relaxed italic mb-3 whitespace-pre-line group-hover:text-white transition-colors duration-700">
-                    {haiku.content}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-[0.3em] text-[#888888] opacity-40">
-                     {haiku.name ? `— ${haiku.name}` : ""}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+            </section>
+          ))}
+        </div>
       </div>
     </main>
-  );
+  )
 }

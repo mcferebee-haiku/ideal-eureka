@@ -14,13 +14,13 @@ export default function Home() {
   const [newHaiku, setNewHaiku] = useState('')
   const [newName, setNewName] = useState('')
   const [syllableCount, setSyllableCount] = useState(0)
-  const [isShaking, setIsShaking] = useState(false)
 
   useEffect(() => {
     fetchPromptAndEntries()
   }, [])
 
   async function fetchPromptAndEntries() {
+    // Sort by created_at since 'day' column was causing issues
     const { data: promptData } = await supabase.from('prompts').select('*').order('created_at', { ascending: false }).limit(1).single()
     setPrompt(promptData)
 
@@ -45,25 +45,15 @@ export default function Home() {
     }, 0)
   }
 
-  const handleTextChange = (e) => {
-    const text = e.target.value
-    setNewHaiku(text)
-    setSyllableCount(countSyllables(text))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (syllableCount !== 17) {
-      setIsShaking(true)
-      setTimeout(() => setIsShaking(false), 400)
-      return
-    }
+    if (syllableCount !== 17) return
 
     const { error } = await supabase
       .from('entries')
       .insert([{ 
         content: newHaiku, 
-        name: newName, 
+        name: newName, // Uses 'name' column
         prompt_id: prompt.id 
       }])
 
@@ -75,77 +65,68 @@ export default function Home() {
     }
   }
 
-  if (!prompt) return (
-    <div className="min-h-screen bg-white flex items-center justify-center italic opacity-40">
-      Loading the sanctuary...
-    </div>
-  )
+  if (!prompt) return <div className="min-h-screen bg-white flex items-center justify-center italic opacity-40">Loading...</div>
 
   return (
-    <main className="min-h-screen bg-white text-black font-[family-name:var(--font-geist-serif)] p-8 md:p-16">
-      
-      {/* Pinned Nav */}
-      <nav className="fixed top-8 left-8 right-8 flex justify-between items-center z-50">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
-          Seventeen Syllables
-        </span>
-        <Link href="/archive" className="text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-black transition-colors duration-500">
-          Archive →
-        </Link>
-      </nav>
-
-      <div className="max-w-xl mx-auto mt-32">
-        {/* Prompt Header */}
-        <header className="mb-24 text-left">
-          <p className="text-[10px] uppercase tracking-[0.4em] text-[#888888] mb-4">
+    <main className="min-h-screen bg-white text-black font-[family-name:var(--font-geist-serif)] p-8 md:p-24 flex flex-col items-center">
+      <div className="w-full max-w-xl text-center space-y-16">
+        
+        {/* Header Section */}
+        <header className="space-y-4">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
             {prompt.created_at ? new Date(prompt.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase() : ""}
           </p>
-          <div className="border-l border-black/10 pl-6">
-            <h1 className="text-sm uppercase tracking-[0.2em] mb-1">{prompt.theme}</h1>
-            <p className="text-xs italic opacity-40">"{prompt.prompt_text}"</p>
-          </div>
+          <h1 className="text-xl uppercase tracking-[0.1em]">{prompt.theme}</h1>
+          <p className="italic opacity-60 text-sm">"{prompt.prompt_text}"</p>
         </header>
 
-        {/* Submission Form */}
-        <form onSubmit={handleSubmit} className={`mb-32 space-y-8 ${isShaking ? 'animate-shake' : ''}`}>
+        {/* Input Section */}
+        <form onSubmit={handleSubmit} className="space-y-8">
           <textarea
             value={newHaiku}
-            onChange={handleTextChange}
-            placeholder="Write your haiku..."
-            className="w-full bg-transparent border-none focus:ring-0 text-lg italic resize-none placeholder:opacity-20 min-h-[120px]"
+            onChange={(e) => {
+              setNewHaiku(e.target.value)
+              setSyllableCount(countSyllables(e.target.value))
+            }}
+            placeholder="Seventeen syllables..."
+            className="w-full bg-transparent border-none focus:ring-0 text-center text-lg italic resize-none placeholder:opacity-20 h-32"
           />
-          <div className="flex justify-between items-end border-t border-black/5 pt-4">
+          <div className="flex flex-col items-center gap-4">
             <input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              placeholder="Your Initials"
-              className="bg-transparent border-none focus:ring-0 text-[10px] uppercase tracking-widest p-0 w-32 placeholder:opacity-30"
+              placeholder="Initials"
+              className="bg-transparent border-none focus:ring-0 text-center text-[10px] uppercase tracking-widest w-24 placeholder:opacity-30"
             />
-            <div className="flex items-center gap-6">
-              <span className={`text-[10px] tracking-widest ${syllableCount === 17 ? 'text-black' : 'text-red-400 opacity-40'}`}>
+            <div className="flex items-center gap-4">
+              <span className={`text-[10px] ${syllableCount === 17 ? 'opacity-100' : 'opacity-20'}`}>
                 {syllableCount}/17
               </span>
-              <button type="submit" className="text-[10px] uppercase tracking-[0.3em] hover:opacity-100 opacity-40 transition-opacity">
+              <button type="submit" className="text-[10px] uppercase tracking-widest hover:opacity-100 opacity-40 transition-opacity">
                 Share
               </button>
             </div>
           </div>
         </form>
 
-        {/* Community Entries */}
-        <div className="space-y-24 pl-6 border-l border-black/5 text-left">
+        {/* Community List */}
+        <div className="pt-16 space-y-24">
           {entries.map((haiku) => (
-            <div key={haiku.id} className="group">
-              <p className="text-lg leading-relaxed italic mb-3 whitespace-pre-line">
-                {haiku.content}
-              </p>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-[#888888] opacity-60">
+            <div key={haiku.id} className="space-y-2">
+              <p className="text-lg italic whitespace-pre-line">{haiku.content}</p>
+              <p className="text-[9px] uppercase tracking-widest text-[#888888]">
                 {haiku.name ? `— ${haiku.name}` : ""}
               </p>
             </div>
           ))}
         </div>
+
+        <footer className="pt-24 pb-8">
+          <Link href="/archive" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
+            The Archive
+          </Link>
+        </footer>
       </div>
     </main>
   )
