@@ -20,8 +20,8 @@ async function fetchArchive() {
     try {
       console.log("Starting fetch...");
       
-      const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('date', { ascending: false });
-      const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
+const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('day', { ascending: false });
+const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
 
       if (pError) console.error("Prompt Error:", pError);
       if (eError) console.error("Entry Error:", eError);
@@ -83,7 +83,7 @@ async function fetchArchive() {
             <section key={day.id} className="animate-fade-in">
               <div className="border-b border-white/5 pb-8 mb-12 text-center">
                 <p className="text-[10px] uppercase tracking-[0.4em] opacity-30 mb-2">
-                  {day.date}
+                  {day.day}
                 </p>
                 <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{day.theme}</h2>
                 <p className="text-xs italic opacity-40">"{day.prompt_text}"</p>
