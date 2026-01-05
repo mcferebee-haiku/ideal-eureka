@@ -65,45 +65,47 @@ async function fetchArchive() {
     </div>
   )
 
-  return (
-    <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8">
-      <nav className="max-w-2xl mx-auto mb-20 flex justify-between items-center">
-        <Link href="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
-          ← Today
-        </Link>
-        <span className="text-[10px] uppercase tracking-[0.3em] opacity-20">The Vault</span>
-      </nav>
+return (
+  <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 md:p-16">
+    
+    {/* Pinned Navigation */}
+    <nav className="fixed top-8 left-8 right-8 flex justify-between items-center z-50">
+      <Link href="/" className="text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-white transition-colors duration-500">
+        ← Today
+      </Link>
+      <span className="text-[10px] uppercase tracking-[0.3em] text-[#888888] opacity-50">
+        Archive
+      </span>
+    </nav>
 
-      <div className="max-w-2xl mx-auto space-y-32">
-        {archiveData.length === 0 ? (
-          <p className="text-center opacity-40 italic">The vault is currently empty.</p>
-        ) : (
-          archiveData.map((day) => (
-            <section key={day.id} className="animate-fade-in">
-              <div className="border-b border-white/5 pb-8 mb-12 text-center">
-                <p className="text-[10px] uppercase tracking-[0.4em] opacity-30 mb-2">
-                  {day.day}
+    <div className="max-w-xl mx-auto mt-24 space-y-40">
+      {archiveData.map((day) => (
+        <section key={day.id} className="animate-fade-in">
+          
+          {/* Day Metadata - Left Aligned */}
+          <div className="mb-12 border-l border-white/10 pl-6">
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[#888888] mb-3">
+              {day.day}
+            </p>
+            <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{day.theme}</h2>
+            <p className="text-xs italic opacity-40">"{day.prompt_text}"</p>
+          </div>
+
+          {/* Haikus - Left Aligned */}
+          <div className="space-y-24">
+            {day.haikus.map((haiku) => (
+              <div key={haiku.id} className="group">
+                <p className="text-lg leading-relaxed italic mb-4 whitespace-pre-line group-hover:text-white transition-colors duration-700">
+                  {haiku.content}
                 </p>
-                <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{day.theme}</h2>
-                <p className="text-xs italic opacity-40">"{day.prompt_text}"</p>
+                <p className="text-[9px] uppercase tracking-[0.3em] text-[#888888] opacity-40 group-hover:opacity-100 transition-opacity">
+                   {haiku.author ? `— ${haiku.author}` : ""}
+                </p>
               </div>
-
-              <div className="space-y-20">
-                {day.haikus.map((haiku) => (
-                  <div key={haiku.id} className="text-center group">
-                    <p className="text-lg leading-relaxed italic mb-4 whitespace-pre-line group-hover:text-white transition-colors duration-700">
-                      {haiku.content}
-                    </p>
-                    <p className="text-[9px] uppercase tracking-[0.3em] opacity-20 group-hover:opacity-40 transition-opacity">
-                      — {haiku.author || 'Anon'}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))
-        )}
-      </div>
-    </main>
-  )
-}
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </main>
+)
