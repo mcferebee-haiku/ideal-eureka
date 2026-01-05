@@ -39,12 +39,11 @@ export default function Archive() {
   if (loading) return <div className="min-h-screen bg-white flex items-center justify-center italic opacity-40 uppercase text-[10px] tracking-widest">Opening Vault...</div>
 
   return (
-    <main className="min-h-screen bg-white text-black font-[family-name:var(--font-geist-serif)] p-8 md:p-24 flex flex-col items-center">
-      <div className="w-full max-w-xl text-center">
+<main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 md:p-24 flex flex-col items-center">      <div className="w-full max-w-xl text-center">
         <nav className="mb-24">
-          <Link href="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
-            ← Back to Today
-          </Link>
+<Link href="/" className="text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-white transition-opacity">
+  ← Back to Today
+</Link>
         </nav>
 
         <div className="space-y-40">
