@@ -3,130 +3,235 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
+
+
 const supabase = createClient(
   'https://fxzbqmhwnyhwqqfsymyt.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4emJxbWh3bnlod3FxZnN5bXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyNzc0MDcsImV4cCI6MjA4Mjg1MzQwN30.sNNXO9SrmIuXPoRFPlMxAKX9dsVTaNsvwB_tWNiCxnE'
 )
 
+const monthStyles = {
+  January: { bg: 'bg-[#f0f4f8]', text: 'text-slate-800', accent: 'border-slate-300' },
+  February: { bg: 'bg-[#fdf2f2]', text: 'text-rose-900', accent: 'border-rose-200' },
+  March: { bg: 'bg-[#f2f8f2]', text: 'text-emerald-900', accent: 'border-emerald-200' },
+  April: { bg: 'bg-[#f0f7f9]', text: 'text-sky-900', accent: 'border-sky-200' },
+  May: { bg: 'bg-[#fbfcf0]', text: 'text-lime-900', accent: 'border-lime-200' },
+  June: { bg: 'bg-[#fffdf0]', text: 'text-amber-900', accent: 'border-amber-200' },
+  July: { bg: 'bg-[#fffaf0]', text: 'text-orange-900', accent: 'border-orange-200' },
+  August: { bg: 'bg-[#fdfbf7]', text: 'text-yellow-800', accent: 'border-yellow-200' },
+  September: { bg: 'bg-[#f7f3f0]', text: 'text-stone-800', accent: 'border-stone-300' },
+  October: { bg: 'bg-[#fdf7f2]', text: 'text-orange-950', accent: 'border-orange-300' },
+  November: { bg: 'bg-[#f4f4f4]', text: 'text-slate-900', accent: 'border-slate-300' },
+  December: { bg: 'bg-[#f9f9fb]', text: 'text-indigo-900', accent: 'border-indigo-200' },
+}
+const haikuQuotes = [
+  "“There is no place we cannot find flowers or think of the moon...” \n— Santōka Taneda",
+  "“Meaning lies as much in the mind of the reader as in the haiku.” \n— Douglas R. Hofstadter",
+  "“Haiku are meant to evoke an emotional response...” \n— Bukusai Ashagawa",
+  "“The haiku reproduces the designating gesture of a child...” \n— Roland Barthes",
+  "“Anything that is not actually present in one’s heart is not haiku.” \n— Santōka Taneda",
+  "“Haiku is a snapshot in time. No veils, no mystery.” \n— Mestre",
+  "“If death is like a sonnet then life would be a haiku.” \n— R.M. Engelhardt",
+  "“You were almost like a haiku: said so little, but meant so much.” \n— Abraham Algahanem",
+  "“Haiku is the deep breath of life.” \n— Santōka Taneda",
+  "“The haiku is a moment, pure and unblemished.” \n— Mestre",
+  "“The love of nature is religion, and that religion is poetry.” \n— R.H. Blyth"
+];
+const countSyllables = (str) => {
+  const text = str.toLowerCase().replace(/[^a-z ]/g, "");
+  if (text.length === 0) return 0;
+  const words = text.split(/\s+/);
+  return words.reduce((acc, word) => {
+    if (word.length <= 3) return acc + 1;
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+    word = word.replace(/^y/, '');
+    const syllables = word.match(/[aeiouy]{1,2}/g);
+    return acc + (syllables ? syllables.length : 1);
+  }, 0);
+};
 export default function Home() {
   const [prompt, setPrompt] = useState(null)
   const [entries, setEntries] = useState([])
-  const [newHaiku, setNewHaiku] = useState('')
+  const [loading, setLoading] = useState(true)
   const [newName, setNewName] = useState('')
   const [syllableCount, setSyllableCount] = useState(0)
+  const [newHaiku, setNewHaiku] = useState('')
+  const [currentMonth, setCurrentMonth] = useState('January')
+  
+  // NEW STATES FOR YOUR IDEAS
+  const [loadingQuote, setLoadingQuote] = useState('')
+  const [isShaking, setIsShaking] = useState(false)
 
   useEffect(() => {
+    // Pick the random quote immediately when the site opens
+    const randomQuote = haikuQuotes[Math.floor(Math.random() * haikuQuotes.length)];
+    setLoadingQuote(randomQuote);
+    
     fetchPromptAndEntries()
   }, [])
 
   async function fetchPromptAndEntries() {
-    // Sort by created_at since 'day' column was causing issues
-    const { data: promptData } = await supabase.from('prompts').select('*').order('created_at', { ascending: false }).limit(1).single()
-    setPrompt(promptData)
+    const now = new Date()
+    const monthName = now.toLocaleString('default', { month: 'long' })
+    const dayNum = now.getDate()
+    setCurrentMonth(monthName)
 
+    const { data: promptData } = await supabase
+      .from('prompts')
+      .select('*')
+      .ilike('month', monthName)
+      .eq('day', dayNum)
+      .single()
+    
     if (promptData) {
+      setPrompt(promptData)
       const { data: entriesData } = await supabase
         .from('entries')
         .select('*')
         .eq('prompt_id', promptData.id)
         .order('created_at', { ascending: false })
+      
       setEntries(entriesData || [])
     }
+    setLoading(false)
   }
 
-  const countSyllables = (text) => {
-    if (!text) return 0
-    const words = text.toLowerCase().split(/\s+/)
-    return words.reduce((acc, word) => {
-      word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$ Elizabeth/, '')
-      word = word.replace(/^y/, '')
-      const vowels = word.match(/[aeiouy]{1,2}/g)
-      return acc + (vowels ? vowels.length : 0)
-    }, 0)
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // 1. THE BOUNCER: Don't submit if it's not 17 syllables
+  if (syllableCount !== 17) {
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 400); 
+    return; 
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (syllableCount !== 17) return
-
-    const { error } = await supabase
-      .from('entries')
-      .insert([{ 
+  // 2. THE HANDSHAKE: Save to Supabase with the prompt connection
+  const { error } = await supabase
+    .from('entries')
+    .insert([
+      { 
         content: newHaiku, 
-        name: newName, // Uses 'name' column
-        prompt_id: prompt.id 
-      }])
+        author: newName, 
+        prompt_id: prompt.id // This links the haiku to today's prompt!
+      },
+    ]);
 
-    if (!error) {
-      setNewHaiku('')
-      setNewName('')
-      setSyllableCount(0)
-      fetchPromptAndEntries()
-    }
+  if (error) {
+    console.error('Error saving haiku:', error);
+  } else {
+    // Reset the form after success
+    setNewHaiku('');
+    setNewName('');
+    setSyllableCount(0);
+    fetchPromptAndEntries(); // Refresh the list to show the new entry
   }
+};
 
-  if (!prompt) return <div className="min-h-screen bg-white flex items-center justify-center italic opacity-40">Loading...</div>
+  const style = monthStyles[currentMonth] || monthStyles.January
 
   return (
-    <main className="min-h-screen bg-white text-black font-[family-name:var(--font-geist-serif)] p-8 md:p-24 flex flex-col items-center">
-      <div className="w-full max-w-xl text-center space-y-16">
-        
-        {/* Header Section */}
-        <header className="space-y-4">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[#888888]">
-            {prompt.created_at ? new Date(prompt.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase() : ""}
+    <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
+      
+      {/* --- LOGO SECTION --- */}
+      <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity">
+        <img 
+          src="/logo.png" 
+          alt="Logo" 
+          className="w-23 h-23 object-contain"
+          onError={(e) => e.target.style.display='none'} 
+        />
+      </div>
+
+{/* Top Right Navigation & Date */}
+<div className="absolute top-8 right-8 text-right z-20">
+  <div className="text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2">
+    {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+  </div>
+  
+  <Link 
+    href="/archive" 
+    className="block text-[10px] uppercase tracking-[0.3em] opacity-20 hover:opacity-100 transition-all duration-500 border-t border-black/5 pt-2"
+  >
+    Archive —&gt;
+  </Link>
+</div>
+      
+      {/* 1. Theme Word Section */}
+      {prompt && (
+        <div className="max-w-xl w-full text-center mt-24 mb-20 animate-fade-in">
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 mb-4 font-sans">Today's Theme</p>
+          <p className="text-[10px] uppercase tracking-[0.6em] opacity-50 mb-6 font-sans italic">
+            {prompt.vibe}
           </p>
-          <h1 className="text-xl uppercase tracking-[0.1em]">{prompt.theme}</h1>
-          <p className="italic opacity-60 text-sm">"{prompt.prompt_text}"</p>
-        </header>
-
-        {/* Input Section */}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <textarea
-            value={newHaiku}
-            onChange={(e) => {
-              setNewHaiku(e.target.value)
-              setSyllableCount(countSyllables(e.target.value))
-            }}
-            placeholder="Seventeen syllables..."
-            className="w-full bg-transparent border-none focus:ring-0 text-center text-lg italic resize-none placeholder:opacity-20 h-32"
-          />
-          <div className="flex flex-col items-center gap-4">
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="Initials"
-              className="bg-transparent border-none focus:ring-0 text-center text-[10px] uppercase tracking-widest w-24 placeholder:opacity-30"
-            />
-            <div className="flex items-center gap-4">
-              <span className={`text-[10px] ${syllableCount === 17 ? 'opacity-100' : 'opacity-20'}`}>
-                {syllableCount}/17
-              </span>
-              <button type="submit" className="text-[10px] uppercase tracking-widest hover:opacity-100 opacity-40 transition-opacity">
-                Share
-              </button>
-            </div>
-          </div>
-        </form>
-
-        {/* Community List */}
-        <div className="pt-16 space-y-24">
-          {entries.map((haiku) => (
-            <div key={haiku.id} className="space-y-2">
-              <p className="text-lg italic whitespace-pre-line">{haiku.content}</p>
-              <p className="text-[9px] uppercase tracking-widest text-[#888888]">
-                {haiku.name ? `— ${haiku.name}` : ""}
-              </p>
-            </div>
-          ))}
+          <h1 className="text-5xl md:text-6xl font-light italic mb-6 tracking-tight">
+            {prompt.theme}
+          </h1>
+          <div className={`w-8 h-[1px] ${style.accent} border-b mx-auto opacity-50`}></div>
         </div>
+      )}
 
-        <footer className="pt-24 pb-8">
-          <Link href="/archive" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-100 transition-opacity">
-            The Archive
-          </Link>
-        </footer>
+      {/* 2. Submission Form */}
+   <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
+  
+  {/* The Text Area */}
+  <textarea 
+    placeholder="Your 17 Syllables For The Day" 
+    value={newHaiku}
+    onChange={(e) => {
+      const text = e.target.value;
+      setNewHaiku(text);
+      setSyllableCount(countSyllables(text)); // This makes the number dance!
+    }}
+    rows="3"
+    className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors italic leading-relaxed text-center placeholder:opacity-40"
+  />
+
+  {/* The Counter - Now safely outside the textarea */}
+  <div className="flex justify-between items-center mt-[-15px] mb-4">
+    <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-40'}`}>
+      {syllableCount} / 17 Syllables
+    </span>
+  </div>
+
+  {/* The Initials Input */}
+  <input 
+    type="text" 
+    placeholder="Your initials" 
+    value={newName}
+    onChange={(e) => setNewName(e.target.value)}
+    maxLength={5}
+    className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-40"
+  />
+
+  {/* The Button */}
+ <button 
+  type="submit" 
+  className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 
+    ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
+>
+  {syllableCount === 17 ? 'Submit' : 'Must be 17 syllables'}
+</button>
+</form>
+      {/* 3. Community Entries */}
+      <div className="max-w-2xl w-full space-y-20 mb-40">
+        <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-40 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
+        {entries.length > 0 ? (
+          entries.map((entry, index) => (
+            <div 
+              key={entry.id} 
+              className="text-left animate-fade-in mx-auto max-w-sm" 
+              style={{ animationDelay: `${0.8 + (index * 0.2)}s` }}
+            >
+              <pre className="italic text-xl leading-loose whitespace-pre-wrap opacity-90 font-serif">
+                {entry.content}
+              </pre>
+              <p className="mt-4 text-[10px] uppercase tracking-[0.3em] opacity-40">— {entry.name}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-center italic opacity-30 text-sm">Silence, for now.</p>
+        )}
       </div>
     </main>
   )
