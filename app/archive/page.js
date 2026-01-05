@@ -13,101 +13,88 @@ export default function Archive() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-async function fetchArchive() {
-    try {
-      console.log("Starting fetch with 'day' column...");
-      
-      // We are now specifically asking for 'day' instead of 'date'
-      const { data: prompts, error: pError } = await supabase.from('prompts').select('*').order('day', { ascending: false });
-      const { data: entries, error: eError } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
+    fetchArchive()
+  }, [])
 
-      if (pError) {
-        console.error("Prompt Error (Check table column names):", pError);
-      }
+  async function fetchArchive() {
+    try {
+      const { data: prompts } = await supabase.from('prompts').select('*').order('day', { ascending: false });
+      const { data: entries } = await supabase.from('entries').select('*').order('created_at', { ascending: false });
 
       if (prompts && entries) {
-        console.log("Data successfully loaded from Supabase");
-        
-        // 1. Grouping logic using 'day'
         let grouped = prompts.map(p => ({
           ...p,
           haikus: entries.filter(e => String(e.prompt_id) === String(p.id))
         })).filter(p => p.haikus.length > 0);
 
-        // 2. Identify entries not linked to a prompt
         const linkedIds = prompts.map(p => String(p.id));
         const orphans = entries.filter(e => !e.prompt_id || !linkedIds.includes(String(e.prompt_id)));
 
-        // 3. Add Orphans using the 'day' key so the UI can find it
         if (orphans.length > 0) {
           grouped.push({
             id: 'orphans',
-            day: 'Past Syllables', // Changed from date to day
+            day: 'Recent Submissions',
             theme: 'Community Gallery',
-            prompt_text: 'A collection of shared moments.',
+            prompt_text: 'Syllables captured in the wild.',
             haikus: orphans
           });
         }
-
         setArchiveData(grouped);
       }
     } catch (err) {
-      console.error("System Error:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic text-[#888888]">
+        Opening the vault...
+      </div>
+    );
   }
 
-  if (loading) return (
-    <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic text-[#d1d1d1] opacity-60">
-      Opening the vault...
-    </div>
-  )
+  return (
+    <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 md:p-16">
+      <nav className="fixed top-8 left-8 right-8 flex justify-between items-center z-50">
+        <Link href="/" className="text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-white transition-colors duration-500">
+          ← Today
+        </Link>
+        <span className="text-[10px] uppercase tracking-[0.3em] text-[#888888] opacity-50">
+          Archive
+        </span>
+      </nav>
 
-return (
-  <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] font-[family-name:var(--font-geist-serif)] p-8 md:p-16">
-    
-    {/* NAVIGATION: Pinned to sides */}
-    <nav className="fixed top-8 left-8 right-8 flex justify-between items-center z-50 pointer-events-none">
-      <Link href="/" className="pointer-events-auto text-[10px] uppercase tracking-[0.3em] text-[#888888] hover:text-white transition-colors duration-500">
-        ← Today
-      </Link>
-      <span className="text-[10px] uppercase tracking-[0.3em] text-[#888888] opacity-50">
-        Archive
-      </span>
-    </nav>
-
-    <div className="max-w-xl mx-auto mt-32 space-y-40">
-      {archiveData.map((day) => (
-        <section key={day.id} className="animate-fade-in text-left">
-          
-          {/* DATE ABOVE PROMPT */}
-          <div className="mb-10">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#888888] mb-4">
-              {day.day}
-            </p>
-            <div className="border-l border-white/10 pl-6">
-              <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{day.theme}</h2>
-              <p className="text-xs italic opacity-40">"{day.prompt_text}"</p>
-            </div>
-          </div>
-
-          {/* HAIKUS: Left Aligned */}
-          <div className="space-y-20 pl-6">
-            {day.haikus.map((haiku) => (
-              <div key={haiku.id} className="group">
-                <p className="text-lg leading-relaxed italic mb-3 whitespace-pre-line group-hover:text-white transition-colors duration-700">
-                  {haiku.content}
-                </p>
-                <p className="text-[9px] uppercase tracking-[0.3em] text-[#888888] opacity-40">
-                   {haiku.author ? `— ${haiku.author}` : ""}
-                </p>
+      <div className="max-w-xl mx-auto mt-32 space-y-40">
+        {archiveData.map((group) => (
+          <section key={group.id} className="animate-fade-in text-left">
+            <div className="mb-10">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-[#888888] mb-4">
+                {group.day}
+              </p>
+              <div className="border-l border-white/10 pl-6">
+                <h2 className="text-sm uppercase tracking-[0.2em] mb-1">{group.theme}</h2>
+                <p className="text-xs italic opacity-40">"{group.prompt_text}"</p>
               </div>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
-  </main>
-):
+            </div>
+
+            <div className="space-y-20 pl-6">
+              {group.haikus.map((haiku) => (
+                <div key={haiku.id} className="group">
+                  <p className="text-lg leading-relaxed italic mb-3 whitespace-pre-line group-hover:text-white transition-colors duration-700">
+                    {haiku.content}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.3em] text-[#888888] opacity-40">
+                     {haiku.author ? `— ${haiku.author}` : ""}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </main>
+  );
+}
