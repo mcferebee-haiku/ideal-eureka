@@ -78,10 +78,10 @@ if (prompts && entries) {
               </header>
 
 {group.haikus.map((haiku) => (
-  <div key={haiku.id} className="mb-4">
-    <p className="text-lg italic">{haiku.content}</p>
-    <p className="text-[9px] uppercase tracking-widest text-gray-400">
-      — {haiku.author || "anon"}  {/* <--- Ensure this says .author */}
+  <div key={haiku.id} className="pt-4 border-t border-black/5">
+    <p className="text-lg italic whitespace-pre-line">{haiku.content}</p>
+    <p className="text-[9px] uppercase tracking-widest text-[#888888] mt-1">
+      — {haiku.author || "anon"}
     </p>
   </div>
 ))}

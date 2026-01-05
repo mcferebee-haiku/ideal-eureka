@@ -230,7 +230,7 @@ const { error } = await supabase
       <div className="max-w-2xl w-full space-y-20 mb-40">
         <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-40 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
         {entries.length > 0 ? (
-{entries.map((entry) => (
+entries.map((entry) => (
   <div key={entry.id}>
     <p>{entry.content}</p>
     <p className="text-[9px] uppercase tracking-widest text-gray-400">
