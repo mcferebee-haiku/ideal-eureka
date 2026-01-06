@@ -134,10 +134,10 @@ export default function Home() {
       
 {/* --- LOGO SECTION --- */}
 <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity z-30">
-  <a href="mailto:your-matt@ferebeelane.com?subject=Haiku%20Feedback">
+  <a href="mailto:matt@ferebeelane.com?subject=Haiku%20Feedback">
     <img 
       src="/logo.png" 
-      alt="Contact" 
+      alt="Contact"
       className="w-21 h-21 object-contain cursor-pointer"
       onError={(e) => e.target.style.display='none'} 
     />
