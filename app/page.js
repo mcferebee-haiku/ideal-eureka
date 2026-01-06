@@ -159,7 +159,7 @@ export default function Home() {
       
       {prompt && (
         <div className="max-w-xl w-full text-center mt-24 mb-20 animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.4em] opacity-70 mb-4 font-sans">Theme + Prompt</p>
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-70 mb-4 font-sans">Theme // Prompt</p>
           <p className="text-[10px] uppercase tracking-[0.6em] opacity-80 mb-6 font-sans italic">
             {prompt.vibe}
           </p>
