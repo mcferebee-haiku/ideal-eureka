@@ -156,7 +156,7 @@ export default function Home() {
       
       {prompt && (
         <div className="max-w-xl w-full text-center mt-24 mb-20 animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 mb-4 font-sans">Today's Theme</p>
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 mb-4 font-sans">Theme + Prompt</p>
           <p className="text-[10px] uppercase tracking-[0.6em] opacity-50 mb-6 font-sans italic">
             {prompt.vibe}
           </p>
@@ -169,7 +169,7 @@ export default function Home() {
 
       <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
         <textarea 
-          placeholder="Your 17 Syllables For The Day" 
+          placeholder="Your Haiku with Prompt" 
           value={newHaiku}
           onChange={(e) => {
             const text = e.target.value;
@@ -192,7 +192,7 @@ export default function Home() {
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           maxLength={5}
-          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-40 font-sans"
+          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-70 font-sans"
         />
 
         <button 
