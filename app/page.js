@@ -203,7 +203,7 @@ export default function Home() {
   className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 font-sans
     ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
 >
-  Submit Haiku
+  Share
 </button>
       </form>
 
