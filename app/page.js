@@ -98,10 +98,10 @@ export default function Home() {
 
     if (!prompt || !prompt.id) return;
 
-    if (syllableCount !== 17) {
+    if (syllableCount !== 18) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 400); 
-      return; 
+
     }
 
     const { error } = await supabase
@@ -198,13 +198,13 @@ export default function Home() {
           className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors text-center text-sm tracking-widest uppercase placeholder:normal-case placeholder:italic placeholder:opacity-70 font-sans"
         />
 
-        <button 
-          type="submit" 
-          className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 font-sans
-            ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
-        >
-          {syllableCount === 17 ? 'Submit' : 'Must be 17 syllables'}
-        </button>
+<button 
+  type="submit" 
+  className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 font-sans
+    ${isShaking ? 'animate-shake border-red-500 text-red-500' : 'hover:bg-black hover:text-white'}`}
+>
+  Submit Haiku
+</button>
       </form>
 
       <div className="max-w-2xl w-full space-y-20 mb-40">
