@@ -127,7 +127,7 @@ export default function Home() {
 
   const style = monthStyles[currentMonth] || monthStyles.January
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-serif italic opacity-40">{loadingQuote}</div>
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-serif italic opacity-60">{loadingQuote}</div>
 
   return (
     <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
@@ -136,19 +136,19 @@ export default function Home() {
         <img 
           src="/logo.png" 
           alt="Logo" 
-          className="w-23 h-23 object-contain"
+          className="w-21 h-21 object-contain"
           onError={(e) => e.target.style.display='none'} 
         />
       </div>
 
       <div className="absolute top-8 right-8 text-right z-20">
-        <div className="text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 font-sans">
+        <div className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2 font-sans">
           {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </div>
         
         <Link 
           href="/archive" 
-          className="block text-[10px] uppercase tracking-[0.3em] opacity-20 hover:opacity-100 transition-all duration-500 border-t border-black/5 pt-2 font-sans"
+          className="block text-[10px] uppercase tracking-[0.3em] opacity-35 hover:opacity-100 transition-all duration-500 border-t border-black/5 pt-2 font-sans"
         >
           Archive —&gt;
         </Link>
@@ -156,8 +156,8 @@ export default function Home() {
       
       {prompt && (
         <div className="max-w-xl w-full text-center mt-24 mb-20 animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.4em] opacity-40 mb-4 font-sans">Theme + Prompt</p>
-          <p className="text-[10px] uppercase tracking-[0.6em] opacity-50 mb-6 font-sans italic">
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-70 mb-4 font-sans">Theme + Prompt</p>
+          <p className="text-[10px] uppercase tracking-[0.6em] opacity-80 mb-6 font-sans italic">
             {prompt.vibe}
           </p>
           <h1 className="text-5xl md:text-6xl font-light italic mb-6 tracking-tight">
@@ -177,11 +177,11 @@ export default function Home() {
             setSyllableCount(countSyllables(text));
           }}
           rows="3"
-          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors italic leading-relaxed text-center placeholder:opacity-40"
+          className="w-full bg-transparent border-b border-black/10 py-2 focus:outline-none focus:border-black/30 transition-colors italic leading-relaxed text-center placeholder:opacity-70"
         />
 
         <div className="flex justify-between items-center mt-[-15px] mb-4">
-          <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-40'} font-sans`}>
+          <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-60'} font-sans`}>
             {syllableCount} / 17 Syllables
           </span>
         </div>
@@ -205,7 +205,7 @@ export default function Home() {
       </form>
 
       <div className="max-w-2xl w-full space-y-20 mb-40">
-        <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-40 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
+        <h2 className="text-center text-[10px] uppercase tracking-[0.4em] opacity-60 border-b border-black/5 pb-4 font-sans">Today's Haikus</h2>
 
         <div className="space-y-12 mt-8">
           {entries.length > 0 ? (
