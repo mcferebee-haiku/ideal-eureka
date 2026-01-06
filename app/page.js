@@ -132,14 +132,17 @@ export default function Home() {
   return (
     <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
       
-      <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity">
-        <img 
-          src="/logo.png" 
-          alt="Logo" 
-          className="w-21 h-21 object-contain"
-          onError={(e) => e.target.style.display='none'} 
-        />
-      </div>
+{/* --- LOGO SECTION --- */}
+<div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity z-30">
+  <a href="mailto:your-matt@ferebeelane.com?subject=Haiku%20Feedback">
+    <img 
+      src="/logo.png" 
+      alt="Contact" 
+      className="w-21 h-21 object-contain cursor-pointer"
+      onError={(e) => e.target.style.display='none'} 
+    />
+  </a>
+</div>
 
       <div className="absolute top-8 right-8 text-right z-20">
         <div className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2 font-sans">
