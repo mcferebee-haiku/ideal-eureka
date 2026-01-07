@@ -134,7 +134,7 @@ export default function Home() {
       
 {/* --- LOGO SECTION --- */}
 <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity z-30">
-  <a href="mailto:matt@ferebeelane.com?subject=Haiku%20Feedback">
+  <a href="mailto:matt@ferebeelane.com?subject=Haiku%20Hi">
     <img 
       src="/logo.png" 
       alt="Contact"
@@ -231,6 +231,19 @@ export default function Home() {
           )}
         </div>
       </div>
+      {/* --- FOOTER SECTION --- */}
+      <footer className="w-full max-w-2xl mx-auto pb-12 pt-20 text-center space-y-4">
+        <div className="w-4 h-[1px] bg-black/10 mx-auto mb-8"></div>
+        <p className="text-[9px] uppercase tracking-[0.3em] opacity-30 leading-loose px-4">
+          all submissions belong to the universe — haiku any questions or site issues{' '}
+          <a 
+            href="mailto:matt@ferebeelane.com?subject=Haiku%20Hi" 
+            className="underline underline-offset-4 hover:opacity-100 transition-opacity"
+          >
+            here
+          </a>
+        </p>
+      </footer>
     </main>
   )
 }
