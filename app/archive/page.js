@@ -47,7 +47,7 @@ export default function Archive() {
     }
   }
 
-  if (loading) return <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic opacity-40 uppercase text-[10px] tracking-widest text-white">Opening Vault...</div>
+  if (loading) return <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center italic opacity-40 uppercase text-[10px] tracking-widest text-white">Turning the page...</div>
 
   return (
     <main className="min-h-screen bg-[#1a1a1a] text-[#d1d1d1] p-8 md:p-24 flex flex-col items-center font-serif">
