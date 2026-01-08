@@ -38,16 +38,17 @@ const haikuQuotes = [
 ];
 
 const countSyllables = (str) => {
-  const text = str.toLowerCase().replace(/[^a-z ]/g, "");
-  if (text.length === 0) return 0;
-  const words = text.split(/\s+/);
-  return words.reduce((acc, word) => {
-    if (word.length <= 3) return acc + 1;
-    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-    word = word.replace(/^y/, '');
-    const syllables = word.match(/[aeiouy]{1,2}/g);
-    return acc + (syllables ? syllables.length : 1);
-  }, 0);
+  let word = str.toLowerCase().replace(/[^a-z]/g, "");
+  if (word.length <= 3) return 1;
+  
+  // Handle common silent suffixes and vowel combinations
+  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  word = word.replace(/^y/, '');
+  
+  // This regex looks for vowel groups that specifically count as syllables
+  const syllableMatches = word.match(/[aeiouy]{1,2}/g);
+  
+  return syllableMatches ? syllableMatches.length : 1;
 };
 
 export default function Home() {
