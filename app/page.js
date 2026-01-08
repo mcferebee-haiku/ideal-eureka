@@ -185,7 +185,7 @@ export default function Home() {
         />
 
         <div className="flex justify-between items-center mt-[-15px] mb-4">
-          <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-red-500 font-bold' : 'opacity-60'} font-sans`}>
+          <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-cyan-800 font-bold' : 'opacity-60'} font-sans`}>
             {syllableCount} / 17 Syllables
           </span>
         </div>
