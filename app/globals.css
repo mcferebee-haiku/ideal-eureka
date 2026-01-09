@@ -37,7 +37,7 @@ body {
 @layer utilities {
   .animate-fade-in {
     /* We add 'both' to ensure it stays hidden until the animation starts */
-    animation: fadeIn 1.2s ease-in-out both;
+    animation: fadeIn .8s ease-in-out both;
   }
 
   @keyframes fadeIn {
