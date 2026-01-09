@@ -36,7 +36,7 @@ body {
 }
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 1.2s ease-in forwards;
+    animation: fadeIn .8s ease-in forwards;
   }
 
   @keyframes fadeIn {
