@@ -36,15 +36,16 @@ body {
 }
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 1.5s ease-in forwards;
+    /* We add 'both' to ensure it stays hidden until the animation starts */
+    animation: fadeIn 1.2s ease-in-out both;
   }
 
   @keyframes fadeIn {
-    from { 
+    0% { 
       opacity: 0; 
-      transform: translateY(10px); 
+      transform: translateY(5px); 
     }
-    to { 
+    100% { 
       opacity: 1; 
       transform: translateY(0); 
     }

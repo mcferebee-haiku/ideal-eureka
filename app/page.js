@@ -237,7 +237,7 @@ if (loading) {
             entries.map((entry, index) => (
               <div 
                 key={entry.id} 
-                className="text-center animate-fade-in mx-auto max-w-sm"
+                className="text-center animate-slide-up mx-auto max-w-sm"
                 style={{ animationDelay: `${0.8 + (index * 0.2)}s` }}
               >
                 <p className="text-lg italic whitespace-pre-line leading-relaxed">
