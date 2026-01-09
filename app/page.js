@@ -68,30 +68,44 @@ export default function Home() {
     fetchPromptAndEntries()
   }, [])
 
-  async function fetchPromptAndEntries() {
-    const now = new Date()
-    const monthName = now.toLocaleString('default', { month: 'long' })
-    const dayNum = now.getDate()
-    setCurrentMonth(monthName)
+async function fetchPromptAndEntries() {
+    // 1. Create a "Timer" promise (e.g., 2500ms = 2 seconds)
+    const timer = new Promise((resolve) => setTimeout(resolve, 2500));
 
-    const { data: promptData } = await supabase
-      .from('prompts')
-      .select('*')
-      .ilike('month', monthName)
-      .eq('day', dayNum)
-      .single()
-    
-    if (promptData) {
-      setPrompt(promptData)
-      const { data: entriesData } = await supabase
-        .from('entries')
+    try {
+      const now = new Date()
+      const monthName = now.toLocaleString('default', { month: 'long' })
+      const dayNum = now.getDate()
+      setCurrentMonth(monthName)
+
+      // 2. Start the database fetch
+      const fetchTask = supabase
+        .from('prompts')
         .select('*')
-        .eq('prompt_id', promptData.id)
-        .order('created_at', { ascending: false })
+        .ilike('month', monthName)
+        .eq('day', dayNum)
+        .single()
       
-      setEntries(entriesData || [])
+      // 3. Wait for BOTH the database and the timer to finish
+      const [promptResult] = await Promise.all([fetchTask, timer]);
+      const promptData = promptResult.data;
+      
+      if (promptData) {
+        setPrompt(promptData)
+        const { data: entriesData } = await supabase
+          .from('entries')
+          .select('*')
+          .eq('prompt_id', promptData.id)
+          .order('created_at', { ascending: false })
+        
+        setEntries(entriesData || [])
+      }
+    } catch (err) {
+      console.error('Error fetching:', err);
+    } finally {
+      // 4. This only runs once BOTH are done
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleSubmit = async (e) => {
