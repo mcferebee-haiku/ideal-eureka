@@ -153,8 +153,7 @@ if (loading) {
 }
 
   return (
-    <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
-      
+<main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative animate-fade-in`}>      
 {/* --- LOGO SECTION --- */}
 <div className="absolute top-6 left-4 opacity-40 hover:opacity-100 transition-opacity z-30">
   <a href="mailto:matt@ferebeelane.com?subject=Haiku%20Hi">
