@@ -142,7 +142,15 @@ async function fetchPromptAndEntries() {
 
   const style = monthStyles[currentMonth] || monthStyles.January
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-serif italic opacity-60">{loadingQuote}</div>
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#faf9f6] p-8">
+      <p className="max-w-md text-center font-serif italic opacity-60 leading-relaxed whitespace-pre-line animate-pulse">
+        {loadingQuote}
+      </p>
+    </div>
+  )
+}
 
   return (
     <main className={`min-h-screen ${style.bg} ${style.text} p-8 flex flex-col items-center transition-colors duration-1000 font-serif relative`}>
