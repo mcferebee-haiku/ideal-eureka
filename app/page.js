@@ -24,17 +24,17 @@ const monthStyles = {
 }
 
 const haikuQuotes = [
-  "“There is no place we cannot find flowers or think of the moon...” \n— Santōka Taneda",
-  "“Meaning lies as much in the mind of the reader as in the haiku.” \n— Douglas R. Hofstadter",
+  "“There is no place we cannot find \n flowers or think of the moon...” \n— Santōka Taneda",
+  "“Meaning lies as much in the mind \n of the reader as in the haiku.” \n— Douglas R. Hofstadter",
   "“Haiku are meant to evoke an emotional response...” \n— Bukusai Ashagawa",
   "“The haiku reproduces the designating gesture of a child...” \n— Roland Barthes",
-  "“Anything that is not actually present in one’s heart is not haiku.” \n— Santōka Taneda",
+  "“Anything that is not actually present \n in one’s heart is not haiku.” \n— Santōka Taneda",
   "“Haiku is a snapshot in time. No veils, no mystery.” \n— Mestre",
   "“If death is like a sonnet then life would be a haiku.” \n— R.M. Engelhardt",
-  "“You were almost like a haiku: said so little, but meant so much.” \n— Abraham Algahanem",
+  "“You were almost like a haiku: \n said so little, but meant so much.” \n— Abraham Algahanem",
   "“Haiku is the deep breath of life.” \n— Santōka Taneda",
   "“The haiku is a moment, pure and unblemished.” \n— Mestre",
-  "“The love of nature is religion, and that religion is poetry.” \n— R.H. Blyth"
+  "“The love of nature is religion, \n and that religion is poetry.” \n— R.H. Blyth"
 ];
 
 const countSyllables = (str) => {
