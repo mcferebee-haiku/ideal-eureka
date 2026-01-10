@@ -32,7 +32,7 @@ body {
   80% { transform: translateX(5px); }
 }
 .animate-shake {
-  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
 }
 @layer utilities {
   .animate-fade-in {
