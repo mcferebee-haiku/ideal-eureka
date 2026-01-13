@@ -38,17 +38,26 @@ const haikuQuotes = [
 ];
 
 const countSyllables = (str) => {
+  if (!str) return 0;
   let word = str.toLowerCase().replace(/[^a-z]/g, "");
   if (word.length <= 3) return 1;
-  
-  // Handle common silent suffixes and vowel combinations
+
+  // 1. Remove common silent endings
   word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  
+  // 2. Handle 'y' at the beginning (consonant) vs end (vowel)
   word = word.replace(/^y/, '');
-  
-  // This regex looks for vowel groups that specifically count as syllables
+
+  // 3. Match vowel groups (this is the heart of the count)
+  // This looks for 1 or 2 vowels together as a single sound
   const syllableMatches = word.match(/[aeiouy]{1,2}/g);
+  let count = syllableMatches ? syllableMatches.length : 1;
+
+  // 4. Fine-tuning for common poetic words
+  if (word.endsWith('ia')) count++; // e.g., 'fuchsia', 'militia'
+  if (word.endsWith('ier')) count++; // e.g., 'happier'
   
-  return syllableMatches ? syllableMatches.length : 1;
+  return count;
 };
 
 export default function Home() {
@@ -60,8 +69,10 @@ export default function Home() {
   const [newHaiku, setNewHaiku] = useState('')
   const [currentMonth, setCurrentMonth] = useState('January')
   const [loadingQuote, setLoadingQuote] = useState('')
-  const [isShaking, setIsShaking] = useState(false)
-
+const [buttonText, setButtonText] = useState('Share'); // New state for text
+  const [isRotating, setIsRotating] = useState(false);  // New state for animation
+  
+  const poeticPhrases = ["Very nice", "Lovely", "Very poignant", "So poetic", "Beautiful", "Perfect"];
   useEffect(() => {
     const randomQuote = haikuQuotes[Math.floor(Math.random() * haikuQuotes.length)];
     setLoadingQuote(randomQuote);
@@ -107,38 +118,46 @@ async function fetchPromptAndEntries() {
       setLoading(false)
     }
   }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  if (!prompt || !prompt.id) return;
 
-    if (!prompt || !prompt.id) return;
+  // We removed the syllableCount check and setIsShaking(true) here
 
-    if (syllableCount !== 18) {
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 400); 
+  const { error } = await supabase
+    .from('entries')
+    .insert([
+      { 
+        content: newHaiku, 
+        author: newName || 'anon', 
+        prompt_id: prompt.id 
+      },
+    ]);
 
-    }
+  if (error) {
+    console.error('Error details:', error);
+    alert(`Submission Failed: ${error.message}`);
+  } else {
+    // Pick the random phrase
+    const randomPhrase = poeticPhrases[Math.floor(Math.random() * poeticPhrases.length)];
+    
+    setButtonText(randomPhrase);
+    setIsRotating(true);
+    
+    setNewHaiku('');
+    setNewName('');
+    setSyllableCount(0);
+    
+    // Reset button after 3 seconds
+    setTimeout(() => {
+      setIsRotating(false);
+      setButtonText('Share');
+    }, 3000);
 
-    const { error } = await supabase
-      .from('entries')
-      .insert([
-        { 
-          content: newHaiku, 
-          author: newName || 'anon', 
-          prompt_id: prompt.id 
-        },
-      ]);
-
-    if (error) {
-      console.error('Error details:', error);
-      alert(`Submission Failed: ${error.message}`);
-    } else {
-      setNewHaiku('');
-      setNewName('');
-      setSyllableCount(0);
-      fetchPromptAndEntries();
-    }
-  };
+    fetchPromptAndEntries();
+  }
+};
 
   const style = monthStyles[currentMonth] || monthStyles.January
 
@@ -181,18 +200,18 @@ if (loading) {
       
       {prompt && (
         <div className="max-w-xl w-full text-center mt-24 mb-20 animate-fade-in">
-          <p className="text-[10px] uppercase tracking-[0.4em] opacity-70 mb-4 font-sans">Theme // Prompt</p>
-          <p className="text-[10px] uppercase tracking-[0.6em] opacity-80 mb-6 font-sans italic">
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-70 mb-2 font-sans">Theme // Prompt</p>
+          <p className="text-[10px] uppercase tracking-[0.6em] opacity-80 mb-2 font-sans italic">
             {prompt.vibe}
           </p>
-          <h1 className="text-5xl md:text-6xl font-light italic mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-6xl font-light italic mb-4 tracking-tight">
             {prompt.theme}
           </h1>
           <div className={`w-8 h-[1px] ${style.accent} border-b mx-auto opacity-50`}></div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-20 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
+      <form onSubmit={handleSubmit} className="max-w-md w-full space-y-6 mb-15 bg-white/30 backdrop-blur-md p-8 rounded-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
         <textarea 
           placeholder="Your Haiku with Prompt" 
           value={newHaiku}
@@ -207,7 +226,7 @@ if (loading) {
 
         <div className="flex justify-between items-center mt-[-15px] mb-4">
           <span className={`text-[10px] uppercase tracking-widest ${syllableCount > 17 ? 'text-cyan-800 font-bold' : 'opacity-60'} font-sans`}>
-            {syllableCount} / 17 Syllables
+            ~{syllableCount} / 17 Syllables
           </span>
         </div>
 
@@ -223,9 +242,10 @@ if (loading) {
 <button 
   type="submit" 
   className={`w-full py-2 border border-black/20 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 font-sans
-    ${isShaking ? 'animate-shake border-slate-400 text-slate-400' : 'hover:bg-black hover:text-white'}`}
+    ${isRotating ? 'animate-confirm bg-black text-white' : 'hover:bg-black hover:text-white'}
+  `}
 >
-  Share
+  {buttonText}
 </button>
       </form>
 

@@ -24,15 +24,21 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-5px); }
-  40% { transform: translateX(5px); }
-  60% { transform: translateX(-5px); }
-  80% { transform: translateX(5px); }
+@keyframes flip-in {
+  0% {
+    opacity: 0;
+    transform: rotateX(-90deg); /* Starts rotated down/hidden */
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0deg); /* Lands flat and visible */
+  }
 }
-.animate-shake {
-  animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+
+.animate-confirm {
+  /* This runs the flip animation once */
+  animation: flip-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  /* The cubic-bezier gives it a nice little "bounce" at the end */
 }
 @layer utilities {
   .animate-fade-in {
